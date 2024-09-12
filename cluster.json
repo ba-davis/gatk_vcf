@@ -1,0 +1,31 @@
+{
+    "__default__":
+    {
+        "account": "davibr",
+        "lab": "walllab",
+        "mem": "30G",
+        "time": "0-24:00",
+	    "partition": "exacloud",
+	    "cores": "8",
+	    "nodes": "1",
+        "qos": "normal"
+    },
+    "fastqc_raw":
+    {
+	    "stdout": "logs/fastqcRaw_%A.out",
+	    "stderr": "logs/fastqcRaw_%A.err"
+    },
+    "trimmomatic":
+    {
+        "stdout": "logs/trimmomatic_%A.out",
+        "stderr": "logs/trimmomatic_%A.err"
+    },
+    "bwa_mem":
+    {
+        "qos": "long_jobs",
+        "time": "3-00",
+        "mem": "72G",
+        "stdout": "logs/bwa_%A.out",
+        "stderr": "logs/bwa_%A.err"
+    }
+}

@@ -1,0 +1,10 @@
+# Config File
+
+adapters:
+  ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:8:true
+
+bwa_index:
+  /home/groups/hoolock2/u0/genomes/ucsc/nomLeu3/indexes/bwa-mem2/nomLeu3.fa
+
+rg:
+  "'@RG\tID:SRR123456\tLB:LIB001\tPL:ILLUMINA\tPU:FLOWCELL1_LANE1\tSM:SAMPLE001'"

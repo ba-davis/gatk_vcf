@@ -1,0 +1,10 @@
+name: gatk_env
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - gatk4
+  - openjdk
+  - samtools
+  - snakemake

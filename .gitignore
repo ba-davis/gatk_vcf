@@ -1,1 +1,2 @@
+# ignore the snakemake directories
 .snakemake/
