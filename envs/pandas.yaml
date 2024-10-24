@@ -1,0 +1,16 @@
+name: pandas_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.9  # Adjust version as needed
+  - pandas
+  - samtools    # Included in case you want to run samtools commands within this environment
+  - numpy       # Often used alongside Pandas
+  - openpyxl    # For reading/writing Excel files if needed
+  - xlsxwriter  # Another option for writing Excel files
+  - pip         # Included if you want to install additional packages via pip
+  - pip:
+      - matplotlib  # For plotting (optional)
+      - seaborn     # For advanced plotting (optional)

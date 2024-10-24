@@ -27,5 +27,28 @@
         "mem": "72G",
         "stdout": "logs/bwa_%A.out",
         "stderr": "logs/bwa_%A.err"
+    },
+    "sort_and_index_bam":
+    {
+        "stdout": "logs/sortBam_%A.out",
+	    "stderr": "logs/sortBam_%A.err"
+    },
+    "haplotype_caller":
+    {
+        "mem": "72G",
+        "stdout": "logs/haplotype_%A.out",
+        "stderr": "logs/haplotype_%A.err"
+    },
+    "reblock_gvcf":
+    {
+        "mem": "72G",
+        "stdout": "logs/reblock_%A.out",
+        "stderr": "logs/reblock_%A.err"
+    },
+    "genomics_db_import":
+    {
+        "mem": "72G",
+        "stdout": "logs/dbimport_%A.out",
+        "stderr": "logs/dbimport_%A.err"
     }
 }

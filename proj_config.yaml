@@ -8,3 +8,9 @@ bwa_index:
 
 rg:
   "'@RG\tID:SRR123456\tLB:LIB001\tPL:ILLUMINA\tPU:FLOWCELL1_LANE1\tSM:SAMPLE001'"
+
+fasta:
+  /home/groups/hoolock2/u0/genomes/ucsc/nomLeu3/nomLeu3.fa
+
+fasta_dict:
+  /home/groups/hoolock2/u0/genomes/ucsc/nomLeu3/nomLeu3.dict
