@@ -50,5 +50,29 @@
         "mem": "72G",
         "stdout": "logs/dbimport_%A.out",
         "stderr": "logs/dbimport_%A.err"
+    },
+    "genotype_gvcfs":
+    {
+        "mem": "72G",
+        "stdout": "logs/genotype_%A.out",
+        "stderr": "logs/genotype_%A.err"
+    },
+    "sample_specific_genotype_filtration":
+    {
+        "mem": "120G",
+        "stdout": "logs/samp_genotype_filter_%A.out",
+        "stderr": "logs/samp_genotype_filter_%A.err"
+    },
+    "variant_filtration":
+    {
+        "mem": "120G",
+        "stdout": "logs/variant_filter_%A.out",
+        "stderr": "logs/variant_filter_%A.err"
+    },
+    "select_variants":
+    {
+        "mem": "120G",
+        "stdout": "logs/select_variants_%A.out",
+        "stderr": "logs/select_variants_%A.err"
     }
 }

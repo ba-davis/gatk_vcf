@@ -26,3 +26,8 @@ Steps include:
 
 **Example execution**   
 snakemake --use-conda --jobs 100 --latency-wait 60 --cluster-config cluster.json --cluster "sbatch -A {cluster.lab} --qos {cluster.qos} -p {cluster.partition} -N {cluster.nodes} -n {cluster.cores} --mem {cluster.mem} -t {cluster.time} -o {cluster.stdout} -e {cluster.stderr}"
+
+**Notes**
+sample_name_map.txt file (and intervals file of entire genome) is produced automatically for GenomicsDBImport step.
+SampleSpecificGenotypeFiltration step requires "data/sample_type_map.txt" file (to be made manually before execution).
+Includes DISCVRSeq-1.3.78.jar in scripts directory, required for SampleSpecificGenotypeFiltration.

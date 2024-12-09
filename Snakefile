@@ -19,7 +19,11 @@ rule all:
         expand("data/reblock/{sample}.rb.g.vcf.gz", sample = SAMPLES),
         "data/genomicsdb/sample_name_map.txt",
         "data/genomicsdb/intervals.list",
-        directory("data/genomicsdb/genomics_db")
+        "data/genomicsdb/genomics_db",
+        "data/genotype/genotyped.vcf.gz",
+        "data/genotype/genotyped.filtered.vcf.gz",
+        "data/variant_filtration/genotyped.filtered.vfilt.vcf.gz",
+        "data/select_variants/genotyped.filtered.vfilt.selectVariants.vcf.gz"
 
 rule fastqc_raw:
     input:
@@ -217,4 +221,125 @@ rule genomics_db_import:
             --batch-size 50 \
             -R {input.fasta} \
             -L {input.intervals}
+        """
+
+rule genotype_gvcfs:
+    input:
+        db_path = "data/genomicsdb/genomics_db",
+        fasta = config["fasta"],
+        intervals = "data/genomicsdb/intervals.list"
+    output:
+        vcf = "data/genotype/genotyped.vcf.gz"
+    params:
+        tmp_dir = "data/",
+        mem = "72g"
+    conda:
+        "envs/gatk.yaml"
+    shell:
+        """
+        gatk --java-options "-Djava.io.tmpdir={params.tmp_dir} -Xmx{params.mem} -Xms{params.mem} -Xss2m" GenotypeGVCFs \
+            -R {input.fasta} \
+            --variant gendb://{input.db_path} \
+            -O {output.vcf} \
+            -L {input.intervals} \
+            --annotate-with-num-discovered-alleles \
+            -stand-call-conf 20 \
+            --max-alternate-alleles 5 \
+            --genomicsdb-max-alternate-alleles 8 \
+            #--only-output-calls-starting-in-intervals \
+            --genomicsdb-shared-posixfs-optimizations
+        """
+
+rule sample_specific_genotype_filtration:
+    input:
+        fasta = config["fasta"],
+        vcf = "data/genotype/genotyped.vcf.gz",
+        sample_map = "sample_type_map.txt"
+    output:
+        filtered_vcf = "data/genotype/genotyped.filtered.vcf.gz"
+    params:
+        tmp_dir = "data/",
+        mem = "120g",
+        jar = "scripts/DISCVRSeq-1.3.78.jar"
+    conda:
+        "envs/gatk.yaml"
+    shell:
+        """
+        java -Djava.io.tmpdir={params.tmp_dir} -Xmx{params.mem} -Xms{params.mem} -Xss2m \
+        -jar {params.jar} SampleSpecificGenotypeFiltration \
+        -R {input.fasta} \
+        -V {input.vcf} \
+        -O {output.filtered_vcf} \
+        --set-filtered-genotype-to-no-call \
+        --genotype-filter-name DP-LT10 \
+        --genotype-filter-expression "WGS:DP<10" \
+        --genotype-filter-name DP-GT100 \
+        --genotype-filter-expression "WGS:DP>100" \
+        --genotype-filter-name GQ-LT20a \
+        --genotype-filter-expression "WGS:g.hasGQ() && !g.hasExtendedAttribute('RGQ') && GQ<20" \
+        --genotype-filter-name DP-LT10 \
+        --genotype-filter-expression "WXS:DP<10" \
+        --genotype-filter-name GQ-LT20a \
+        --genotype-filter-expression "WXS:g.hasGQ() && !g.hasExtendedAttribute('RGQ') && GQ<20" \
+        --sample-map {input.sample_map}
+        """
+
+# annotation rule? VariantAnnotator
+
+rule variant_filtration:
+    input:
+        fasta = config["fasta"],
+        vcf = "data/genotype/genotyped.filtered.vcf.gz",
+        mask = config["repeat_mask_bed"]
+    output:
+        vcf = "data/variant_filtration/genotyped.filtered.vfilt.vcf.gz"
+    params:
+        tmp_dir = "data/",
+        mem = "120g",
+    conda:
+        "envs/gatk.yaml"
+    shell:
+        """
+        gatk --java-options "-Djava.io.tmpdir={params.tmp_dir} -Xmx{params.mem} -Xms{params.mem} -Xss2m" VariantFiltration \
+            -R {input.fasta} \
+            -V {input.vcf} \
+            -O {output.vcf} \
+            --filter-name QualityFilter \
+            --filter "vc.hasAttribute('QD') && QD < 2.0" \
+            --filter-name FisherStrand \
+            --filter "vc.hasAttribute('FS') && ((!vc.isIndel() && FS > 60.0) || (vc.isIndel() && FS > 200.0))" \
+            --filter-name StrandOddsRatio \
+            --filter "vc.hasAttribute('SOR') && ((!vc.isIndel() && SOR > 3.0) || (vc.isIndel() && SOR > 10.0))" \
+            --filter-name MappingQuality \
+            --filter "vc.hasAttribute('MQ') && (!vc.isIndel() && MQ < 40.0)" \
+            --filter-name MQRankSum \
+            --filter "vc.hasAttribute('MQRankSum') && (!vc.isIndel() && MQRankSum < -12.5)" \
+            --filter-name ReadPosRankSum \
+            --filter "vc.hasAttribute('ReadPosRankSum') && ((!vc.isIndel() && ReadPosRankSum < -8.0) || (vc.isIndel() && ReadPosRankSum < -20.0))" \
+            --filter-name NoneCalled \
+            --filter "vc.getCalledChrCount() == 0" \
+            --mask-name RepeatMask \
+            --mask {input.mask}
+        """
+
+rule select_variants:
+    input:
+        fasta = config["fasta"],
+        vcf = "data/variant_filtration/genotyped.filtered.vfilt.vcf.gz"
+    output:
+        vcf = "data/select_variants/genotyped.filtered.vfilt.selectVariants.vcf.gz"
+    params:
+        tmp_dir = "data/",
+        mem = "120g",
+    conda:
+        "envs/gatk.yaml"
+    shell:
+        """
+        gatk --java-options "-Djava.io.tmpdir={params.tmp_dir} -Xmx{params.mem} -Xms{params.mem} -Xss2m" SelectVariants \
+            -R {input.fasta} \
+            -V {input.vcf} \
+            -O {output.vcf} \
+            --select "vc.getCalledChrCount() > 0" \
+            --allow-nonoverlapping-command-line-samples \
+            --set-filtered-gt-to-nocall
         """

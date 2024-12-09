@@ -14,3 +14,6 @@ fasta:
 
 fasta_dict:
   /home/groups/hoolock2/u0/genomes/ucsc/nomLeu3/nomLeu3.dict
+
+repeat_mask_bed:
+  /home/groups/hoolock2/u0/genomes/ucsc/nomLeu3/annotation/nomLeu3_repeatmask.sorted.bed
