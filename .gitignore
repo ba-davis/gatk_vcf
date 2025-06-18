@@ -1,2 +1,21 @@
-# ignore the snakemake directories
+# Ignore Conda build artifacts
+*.snakemake
 .snakemake/
+*.log
+*.err
+*.out
+*.conda
+*.egg-info
+.env/
+*.env
+
+# Ignore everything in data/...
+data/*
+# ...except the fastq folder and its .gitkeep file
+!data/fastq/
+!data/fastq/.gitkeep
+
+# Ignore everything under logs/, except the placeholder
+logs/*
+!logs/.gitkeep
+
