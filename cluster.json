@@ -4,38 +4,44 @@
         "account": "davibr",
         "lab": "walllab",
         "mem": "30G",
-        "time": "0-24:00",
-	    "partition": "exacloud",
-	    "cores": "8",
-	    "nodes": "1",
+        "time": "0-36:00",
+	"partition": "batch",
+	"cores": "8",
+	"nodes": "1",
         "qos": "normal"
     },
     "fastqc_raw":
     {
-	    "stdout": "logs/fastqcRaw_%A.out",
-	    "stderr": "logs/fastqcRaw_%A.err"
+	"stdout": "logs/fastqcRaw_%A.out",
+	"stderr": "logs/fastqcRaw_%A.err"
     },
     "trimmomatic":
     {
+        "mem": "72G",
         "stdout": "logs/trimmomatic_%A.out",
         "stderr": "logs/trimmomatic_%A.err"
     },
     "bwa_mem":
     {
         "qos": "long_jobs",
-        "time": "3-00",
-        "mem": "72G",
+        "time": "7-00",
+        "cpus-per-task": "12",
+        "mem": "120G",
         "stdout": "logs/bwa_%A.out",
         "stderr": "logs/bwa_%A.err"
     },
     "sort_and_index_bam":
     {
+        "cpus-per-task": "12",
         "stdout": "logs/sortBam_%A.out",
-	    "stderr": "logs/sortBam_%A.err"
+	"stderr": "logs/sortBam_%A.err"
     },
     "haplotype_caller":
     {
-        "mem": "72G",
+        "qos": "long_jobs",
+        "mem": "112G",
+        "cpus-per-task": "8",
+        "time": "7-00",
         "stdout": "logs/haplotype_%A.out",
         "stderr": "logs/haplotype_%A.err"
     },
